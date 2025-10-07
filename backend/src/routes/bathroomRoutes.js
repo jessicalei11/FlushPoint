@@ -1,6 +1,7 @@
 const express = require("express");
 const cloudinary = require("cloudinary");
 const Bathroom = require("../models/Bathroom.js");
+const protectRoute = require("../middleware/auth.middleware.js");
 
 const router = express.Router();
 
@@ -21,7 +22,8 @@ router.post("/", async (req , res) => {
         const newBathroom = new Bathroom({
             name,
             latitude,
-            longitude
+            longitude,
+            user: req.user._id,
         })
 
         await newBathroom.save();
