@@ -14,7 +14,7 @@ Welcome to FlushPoint, a mobile application that's designed to help you quickly 
 
 ## Setup & Installation Guide
 **Prerequisites**
-* **Node.js**: Ensure you have Node.js **(v14 or higher)** installed. The latest LTS version is recommended for both projects.
+* **Node.js**: Ensure you have Node.js **(v22 or higher)** installed. The latest LTS version is recommended for both projects.
 
 * **MongoDB**: A running instance of a MongoDB database. You can use a local installation or a cloud service like MongoDB Atlas.
 
@@ -67,3 +67,4 @@ npm install
 
 ## Aditional Information
 [Figma](https://www.figma.com/design/aXRgxJseo6pDSljto5GDeW/Untitled?node-id=0-1&t=1jTUm2m4Egth3V54-1)
+[Timesheet](https://docs.google.com/spreadsheets/d/1oe3HgWEz1axiPsVEPOCOrG8cxm5t2RXCUKGzKnlUd-4/edit?usp=sharing)
