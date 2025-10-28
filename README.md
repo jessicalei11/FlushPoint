@@ -62,7 +62,7 @@ Open a new terminal, navigate to the `mobile` directory, install the dependencie
 ```
 cd mobile 
 npm install
-прх ехро
+прх ехро or npm start
 ```
 
 ## Aditional Information
