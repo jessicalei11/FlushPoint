@@ -1,15 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv/config");
-const job = require("./lib/cron.js");
+const jobModule = require("./lib/cron.js");
 
+const job = jobModule.default;
 const authRoutes = require("./routes/authRoutes.js");
 const bathroomRoutes = require("./routes/bathroomRoutes.js");
 const { connectDB } = require("./lib/db.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const job = jobModule.default;
 
 job.start();
 app.use(express.json());
