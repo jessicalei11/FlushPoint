@@ -9,6 +9,7 @@ const { connectDB } = require("./lib/db.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const job = jobModule.default;
 
 job.start();
 app.use(express.json());
