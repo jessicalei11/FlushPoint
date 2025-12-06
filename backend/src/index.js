@@ -1,9 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv/config");
-const jobModule = require("./lib/cron.js");
+const job = require("./lib/cron.js"); 
 
-const job = jobModule.default;
 const authRoutes = require("./routes/authRoutes.js");
 const bathroomRoutes = require("./routes/bathroomRoutes.js");
 const { connectDB } = require("./lib/db.js");
