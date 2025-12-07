@@ -5,13 +5,21 @@ const bathroomSchema = new mongoose.Schema({
         type: String,
         required: true 
     },
+    description: { 
+        type: String,
+        default: ""
+    },
     latitude: {
         type: Number,
-        require: true
+        required: true
     },
     longitude: {
         type: Number,
-        require: true
+        required: true
+    },
+    image: { 
+        type: String,
+        required: true,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,

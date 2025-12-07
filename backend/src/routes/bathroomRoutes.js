@@ -5,14 +5,21 @@ const protectRoute = require("../middleware/auth.js");
 
 const router = express.Router();
 
-router.post("/", async (req , res) => {
+router.post("/", protectRoute, async (req , res) => {
     try {
-        const {name, latitude, longitude} = req.body;
+        const {name, description, latitude, longitude, image} = req.body;
 
-        if (!name || !latitude || !longitude){
-            return res.status.json({message: "Please provide all fields."});
+        if (!name || !latitude || !longitude || !description || !image){
+            return res.status(400).json({message: "Please provide all fields."});
         }
 
+        let imageUrl = image;
+
+        const uploadResponse = await cloudinary.uploader.upload(image, {
+            folder: "bathroom_images" 
+        });
+
+        imageUrl = uploadResponse.secure_url;        
         /*
         To upload images to cloudinary:
         const uploadResponse = await cloudinary.uploader.upload(image);
@@ -21,18 +28,20 @@ router.post("/", async (req , res) => {
 
         const newBathroom = new Bathroom({
             name,
+            description,
             latitude,
             longitude,
+            image: imageUrl,
             user: req.user._id,
         })
 
         await newBathroom.save();
 
-        res.status(201).json(newBook);
+        res.status(201).json(newBathroom);
 
     } catch (error) {
         console.log("Error creating bathroom", error);
-        res.status(500).json({ message: error.message});
+        res.status(500).json({ message: "Failed to create bathroom: " + error.message});
     }
 });
 
@@ -43,15 +52,17 @@ router.get("/",protectRoute, async (req, res) => {
         const limit = req.query.limit || 5;
         const skip = (page - 1) * limit;
 
-        const bathroom = await Bathroom.find().sort({createdAt: -1}).skip(skip).limit(limit).populate("user", "username profileImage"); 
+        const totalBathroom = await Bathroom.countDocuments();
 
-        res.send({
-            bathroom, 
+        const bathrooms = await Bathroom.find().sort({createdAt: -1}).skip(skip).limit(limit).populate("user", "username profileImage"); 
+
+        res.json({
+            bathrooms, 
             currentPage: page, 
             totalBathroom, 
-            totalPages: Math.ceil(totalBook / limit)});
+            totalPages: Math.ceil(totalBathroom / limit)});
     } catch (error) {
-        console.log("Error in get all book route", error);
+        console.log("Error in get all bathroom route", error);
         res.status(500).json({message: "Internal server error"});
     }
 })
@@ -60,7 +71,7 @@ router.delete("/:id", protectRoute, async (req, res) => {
     try {
         const bathroom = await Bathroom.findById(req.params.id);
         //checks if user is the owner of the bathroom
-        if (!book){
+        if (!bathroom){
             return res.status(404).json({message: "Bathroom not found."});
         }
         if (bathroom.user.toString() !== req.user._id.toString()){

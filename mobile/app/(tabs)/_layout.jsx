@@ -13,6 +13,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShow: false,
         tabBarActiveTintColor: COLORS.primary,
+
         headerTitleStyle: {
           color: COLORS.textPrimary,
           fontWeight: "600",
@@ -23,7 +24,7 @@ export default function TabLayout() {
           backgroundColor: COLORS.cardBackground,
           borderTopWidth: 1,
           borderTopColor: COLORS.border,
-          paddingTop: 5,
+          paddingTop: 20,
           paddingBottom: insets.bottom,
           height: 60 + insets.bottom,
         }
@@ -32,7 +33,8 @@ export default function TabLayout() {
         <Tabs.Screen 
           name="index"
           options={{
-            title: "Map",
+            title: "",
+            headerTransparent: true,
             tabBarIcon: ({color, size}) => (<FontAwesome5
               name = "map-marked-alt"
               size = {size}
@@ -43,7 +45,8 @@ export default function TabLayout() {
         <Tabs.Screen 
           name="create"
           options={{
-            title: "Create",
+              title: "",
+              headerTransparent: true,
               tabBarIcon: ({color, size}) => (<Ionicons
               name = "add-circle-outline"
               size = {size}
@@ -54,7 +57,8 @@ export default function TabLayout() {
         <Tabs.Screen 
           name="profile"
           options={{
-            title: "Profile",
+              title: "",
+              headerTransparent: true,
               tabBarIcon: ({color, size}) => (<Ionicons
               name = "person-outline"
               size = {size}

@@ -136,7 +136,7 @@ export default function Signup() {
             {/* Footer */}
             <View style = {styles.footer}>
               <Text style = {styles.footerText}>Already have an account?</Text>
-              <Link href = "/auth" asChild>
+              <Link href = "/(auth)" asChild>
                 <TouchableOpacity>
                   <Text style = {styles.link}>Login</Text>
                 </TouchableOpacity>
