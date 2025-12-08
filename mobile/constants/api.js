@@ -1,4 +1,4 @@
-export const API_URL = "http://127.0.0.1:3000/api";
+export const API_URL = "https://flushpoint.onrender.com/api";
 
 //export const API_URL = "http://localhost:3000/api";
 
