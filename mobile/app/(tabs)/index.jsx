@@ -10,8 +10,9 @@ import { useRouter } from 'expo-router';
 import MapViewDirections from 'react-native-maps-directions';
 import { Ionicons } from '@expo/vector-icons'; 
 import styles from '../../assets/styles/map.styles'; 
+import Constants from 'expo-constants';
 
-const GOOGLE_MAPS_APIKEY = "AIzaSyDx3tXRqR6fbJ60jM11x6dn7_kfsdnsYEQ";
+const GOOGLE_MAPS_APIKEY = Constants.manifest.extra.googleMapsApiKey;
 
 export default function MapScreen() {
     const router = useRouter();
