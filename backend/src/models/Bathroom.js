@@ -26,6 +26,15 @@ const bathroomSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    totalStars: {
+        type: Number,
+        min: 0,
+        default: 0
+    },
+    numberOfRatings: {
+        type: Number,
+        default: 0
+    }
 }, {
     timestamps: true 
 });

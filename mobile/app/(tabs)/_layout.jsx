@@ -66,6 +66,14 @@ export default function TabLayout() {
             />)
           }}
         />
+        <Tabs.Screen 
+          name="details"
+          options={{
+              href: null, 
+              headerShown: false,
+              title: "Bathroom Details"
+          }}
+        />
     </Tabs>
 
   )

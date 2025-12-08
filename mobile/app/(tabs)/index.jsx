@@ -1,18 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Alert, ActivityIndicator, Image } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, Alert, ActivityIndicator, Image, TouchableOpacity } from 'react-native'; 
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useLocationStore } from '../../store/locationStore'; 
 import { useAuthStore } from '../../store/authStore'; 
 import { API_URL } from '../../constants/api'; 
 import COLORS from '../../constants/colors';
+import { useRouter } from 'expo-router';
+import MapViewDirections from 'react-native-maps-directions';
+import { Ionicons } from '@expo/vector-icons'; 
+import styles from '../../assets/styles/map.styles'; 
+
+const GOOGLE_MAPS_APIKEY = "AIzaSyDx3tXRqR6fbJ60jM11x6dn7_kfsdnsYEQ";
 
 export default function MapScreen() {
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
-    // Use the store function to SET the locations array
     const { locations, setLocations } = useLocationStore(); 
     const { token } = useAuthStore();
 
+    const [destination, setDestination] = useState(null);
+
     const fetchBathrooms = async () => {
+        setLoading(true);
         if (!token) {
             setLoading(false);
             return;
@@ -30,21 +40,23 @@ export default function MapScreen() {
 
             if (!response.ok) {
                 const errorMsg = data.message || "Failed to fetch locations.";
-                throw new Error(errorMsg);
+                Alert.alert("Error", errorMsg);
+                setLoading(false);
+                return; 
             }
 
-            // Map the fetched data and ensure coordinates are numbers
             const fetchedLocations = data.bathrooms.map(item => ({
-                // Use the database _id as the unique key
                 id: item._id, 
                 name: item.name,
                 description: item.description,
-                image: item.image, // Include the image URL for the callout
+                image: item.image,
                 latitude: parseFloat(item.latitude),
                 longitude: parseFloat(item.longitude),
+                address: item.address, 
+                averageRating: parseFloat(item.averageRating || 0), 
+                numOfReviews: parseInt(item.numOfReviews || 0),  
             }));
 
-            // Update the global store with all fetched locations
             setLocations(fetchedLocations); 
 
         } catch (error) {
@@ -55,16 +67,27 @@ export default function MapScreen() {
         }
     };
 
-    useEffect(() => {
-        fetchBathrooms();
-    }, [token]); 
+    useFocusEffect(
+        useCallback(() => {
 
-    // Define initial region (or center of New York)
+            fetchBathrooms();
+
+            return () => {
+
+            };
+        }, [token]) 
+    );
+
     const initialRegion = {
         latitude: 40.7128,
         longitude: -74.0060,
         latitudeDelta: 0.15,
         longitudeDelta: 0.15,
+    };
+
+    const handleRefresh = () => {
+        setDestination(null); 
+        fetchBathrooms(); 
     };
 
     if (loading) {
@@ -75,12 +98,35 @@ export default function MapScreen() {
             </View>
         );
     }
+
+const handleCalloutPress = (location) => {
+        router.push({
+            pathname: "/details", 
+            params: {
+                id: location.id,
+                name: location.name,
+                address: location.address,
+                averageRating: location.averageRating,
+                numOfReviews: location.numOfReviews,
+                description: location.description,
+                image: location.image,
+                latitude: location.latitude,
+                longitude: location.longitude,
+            }
+        });
+    };
     
+    const stopNavigation = () => { 
+      setDestination(null);
+    };    
+      
     return (
         <View style={styles.container}>
             <MapView
                 style={styles.map}
-                provider={PROVIDER_GOOGLE} // Explicitly use Google Maps
+                showsUserLocation
+                showsMyLocationButton
+                provider={PROVIDER_GOOGLE} 
                 initialRegion={initialRegion}
             >
                 {locations.map((location) => (
@@ -92,11 +138,9 @@ export default function MapScreen() {
                         }}
                         title={location.name}
                     >
-                        {/* Custom Callout to show Image and Name */}
-                        <Callout tooltip>
+                        <Callout tooltip onPress={() => handleCalloutPress(location)}>
                             <View style={styles.calloutContainer}>
                                 <Text style={styles.calloutTitle}>{location.name}</Text>
-                                {/* Display the image */}
                                 {location.image ? (
                                     <Image 
                                         source={{ uri: location.image }} 
@@ -105,43 +149,24 @@ export default function MapScreen() {
                                 ) : (
                                     <Text style={styles.calloutNoImage}>No Image</Text>
                                 )}
+                                <Text style={styles.calloutTapHint}>Tap here for directions</Text>
                             </View>
                         </Callout>
                     </Marker>
                 ))}
             </MapView>
+            
+            <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={handleRefresh}
+                disabled={loading} 
+            >
+                {loading ? (
+                    <ActivityIndicator size="small" color={COLORS.primary} />
+                ) : (
+                    <Ionicons name="refresh-outline" size={24} color={COLORS.textPrimary} />
+                )}
+            </TouchableOpacity>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1 },
-    map: { width: '100%', height: '100%' },
-    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    
-    // --- Styles for Custom Callout ---
-    calloutContainer: {
-        width: 180, // Fixed width for callout box
-        padding: 5,
-        backgroundColor: COLORS.white,
-        borderRadius: 6,
-        alignItems: 'center',
-    },
-    calloutTitle: {
-        fontWeight: 'bold',
-        fontSize: 14,
-        marginBottom: 4,
-        textAlign: 'center',
-    },
-    calloutImage: {
-        width: 160,
-        height: 100, // Fixed height for image preview
-        resizeMode: 'cover',
-        borderRadius: 4,
-        marginTop: 5,
-    },
-    calloutNoImage: {
-        fontSize: 12,
-        color: COLORS.textSecondary,
-    }
-});
