@@ -4,11 +4,6 @@ const Review = require('../models/Review');
 const protect = require('../middleware/auth'); 
 const { updateBathroomRating } = require('../utils/ratingUtils'); 
 
-// -----------------------------------------------------------
-// ⭐ 1. STATIC ROUTE: Get all reviews submitted by the authenticated user (Profile Screen)
-//    MUST BE PLACED FIRST.
-// -----------------------------------------------------------
-// Endpoint: GET /api/reviews/user-reviews
 router.get('/user-reviews', protect, async (req, res) => {
     const userId = req.user._id;
 
@@ -27,10 +22,6 @@ router.get('/user-reviews', protect, async (req, res) => {
     }
 });
 
-// -----------------------------------------------------------
-// 2. DYNAMIC ROUTE: Get all reviews for a specific bathroom (Details Screen)
-// -----------------------------------------------------------
-// Endpoint: GET /api/reviews/:bathroomId
 router.get('/:bathroomId', async (req, res) => {
     const { bathroomId } = req.params;
 
@@ -49,8 +40,6 @@ router.get('/:bathroomId', async (req, res) => {
     }
 });
 
-// --- 3. POST: Create a new review ---
-// Endpoint: POST /api/reviews
 router.post('/', protect, async (req, res) => {
     const { bathroomId, rating, description } = req.body;
     const userId = req.user._id; 
@@ -84,8 +73,6 @@ router.post('/', protect, async (req, res) => {
     }
 });
 
-// --- 4. PUT/PATCH: Edit an existing review ---
-// Endpoint: PUT /api/reviews/:reviewId
 router.put('/:reviewId', protect, async (req, res) => {
     const { reviewId } = req.params;
     const { rating, description } = req.body;
@@ -126,8 +113,6 @@ router.put('/:reviewId', protect, async (req, res) => {
     }
 });
 
-// --- 5. DELETE: Delete a specific review ---
-// Endpoint: DELETE /api/reviews/:reviewId
 router.delete('/:reviewId', protect, async (req, res) => {
 
     const { reviewId } = req.params;
